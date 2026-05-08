@@ -1,0 +1,35 @@
+# ─────────────────────────────────────────────
+# YouTube Whisper Plus — .gitignore
+# ─────────────────────────────────────────────
+
+# Python environment — always disposable
+.venv/
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+
+# Whisper models — large binary files, re-downloaded on first run
+models/
+
+# User outputs & temp files
+outputs/
+downloads/
+
+# Bundled FFmpeg binaries — too large for git
+ffmpeg/
+
+# OS noise
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
