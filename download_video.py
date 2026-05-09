@@ -98,12 +98,40 @@ def download_audio(
     )
 
 
+# ─────────────────────────────────────────────
+#  Cleanup
+# ─────────────────────────────────────────────
 def cleanup_download(downloads_dir: Path) -> None:
-    """Remove temporary audio files after transcription."""
+    """
+    Remove all temporary files created during a download pass.
+
+    Covers: audio in any format yt-dlp may leave behind, thumbnails in any
+    image format, and any leftover intermediate files (e.g. .webm before
+    FFmpeg conversion).
+    """
     downloads_dir = Path(downloads_dir)
-    for pattern in ("audio.mp3", "audio.webm", "thumbnail.*"):
-        for f in downloads_dir.glob(pattern):
+    if not downloads_dir.exists():
+        return
+
+    patterns = (
+        # Audio — final and intermediate
+        "audio.mp3",
+        "audio.webm",
+        "audio.m4a",
+        "audio.ogg",
+        "audio.opus",
+        "audio.wav",
+        # Thumbnails — all image formats yt-dlp may write
+        "thumbnail.jpg",
+        "thumbnail.jpeg",
+        "thumbnail.webp",
+        "thumbnail.png",
+    )
+
+    for pattern in patterns:
+        target = downloads_dir / pattern
+        if target.exists():
             try:
-                f.unlink()
-            except OSError:
-                pass
+                target.unlink()
+            except OSError as e:
+                print(f"  ⚠  Could not remove {target.name}: {e}")
