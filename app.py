@@ -4,6 +4,7 @@ Local YouTube transcription via Faster-Whisper + yt-dlp + Gradio.
 """
 
 import os
+import json
 import time
 import warnings
 import gradio as gr
@@ -23,9 +24,43 @@ PROJECT_ROOT  = Path(__file__).parent
 MODELS_DIR    = PROJECT_ROOT / "models"
 OUTPUTS_DIR   = PROJECT_ROOT / "outputs"
 DOWNLOADS_DIR = PROJECT_ROOT / "downloads"
+SETTINGS_FILE = PROJECT_ROOT / "settings.json"
 
 WHISPER_MODELS = ["tiny", "base", "small", "medium", "large-v2", "large-v3", "turbo"]
 DEFAULT_MODEL  = "turbo"
+
+
+# ─────────────────────────────────────────────
+#  Settings persistence
+# ─────────────────────────────────────────────
+DEFAULT_SETTINGS = {
+    "model":    DEFAULT_MODEL,
+    "language": "Auto Detect",
+    "browser":  "None (no cookies)",
+}
+
+def load_settings() -> dict:
+    """Load saved settings, falling back to defaults for any missing keys."""
+    try:
+        if SETTINGS_FILE.exists():
+            with open(SETTINGS_FILE, "r", encoding="utf-8") as f:
+                saved = json.load(f)
+            # Merge with defaults so new keys are always present
+            return {**DEFAULT_SETTINGS, **saved}
+    except Exception:
+        pass
+    return dict(DEFAULT_SETTINGS)
+
+def save_settings(model: str, language: str, browser: str) -> None:
+    """Persist the current dropdown selections to disk."""
+    try:
+        with open(SETTINGS_FILE, "w", encoding="utf-8") as f:
+            json.dump({"model": model, "language": language, "browser": browser}, f, indent=2)
+    except Exception as e:
+        print(f"  ⚠  Could not save settings: {e}")
+
+# Load once at startup
+_settings = load_settings()
 
 LANGUAGES = {
     "Auto Detect":  None,
@@ -106,6 +141,9 @@ def run_pipeline(
     if not url:
         yield "", None, "", "⚠  Please enter a YouTube URL.", None
         return
+
+    # Persist the user's current selections immediately
+    save_settings(model_name, language_label, browser_label)
 
     language_code = LANGUAGES.get(language_label)
     browser       = BROWSERS.get(browser_label)
@@ -336,19 +374,19 @@ with gr.Blocks(title="YouTube Whisper Plus") as demo:
         )
         model_dropdown = gr.Dropdown(
             choices=WHISPER_MODELS,
-            value=DEFAULT_MODEL,
+            value=_settings["model"],
             label="Whisper Model",
             scale=1,
         )
         language_dropdown = gr.Dropdown(
             choices=list(LANGUAGES.keys()),
-            value="Auto Detect",
+            value=_settings["language"],
             label="Language",
             scale=1,
         )
         browser_dropdown = gr.Dropdown(
             choices=list(BROWSERS.keys()),
-            value="None (no cookies)",
+            value=_settings["browser"],
             label="Browser Cookies",
             scale=1,
         )
@@ -418,6 +456,17 @@ with gr.Blocks(title="YouTube Whisper Plus") as demo:
         inputs=[],
         outputs=[transcript_output, thumbnail, video_title, status_box, output_file, url_input],
     )
+
+    # ── Persist settings on every dropdown change ──
+    def _save_on_change(model, language, browser):
+        save_settings(model, language, browser)
+
+    for dropdown in [model_dropdown, language_dropdown, browser_dropdown]:
+        dropdown.change(
+            fn=_save_on_change,
+            inputs=[model_dropdown, language_dropdown, browser_dropdown],
+            outputs=[],
+        )
 
 
 # ─────────────────────────────────────────────
