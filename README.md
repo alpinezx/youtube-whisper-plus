@@ -1,9 +1,29 @@
 # 🎙 YouTube Whisper Plus
 
-A modern, local YouTube transcription app powered by [Faster-Whisper](https://github.com/SYSTRAN/faster-whisper) and [yt-dlp](https://github.com/yt-dlp/yt-dlp).  
+A modern, local transcription app powered by [Faster-Whisper](https://github.com/SYSTRAN/faster-whisper) and [yt-dlp](https://github.com/yt-dlp/yt-dlp).  
 GPU-accelerated, private, and self-contained. No data leaves your machine.
 
+> **Windows only** — a Linux/Docker port is planned for a future release.
+
 > Forked from [danilotpnta/Youtube-Whisper](https://github.com/danilotpnta/Youtube-Whisper) — modernised and extended.
+
+---
+
+## 🌐 Supported Sites
+
+Despite the name, this app works with **hundreds of sites** — not just YouTube. yt-dlp handles the downloading and supports virtually any platform with publicly accessible video or audio, including:
+
+- YouTube
+- X / Twitter
+- Instagram
+- TikTok
+- Vimeo
+- SoundCloud
+- Reddit
+- BBC
+- ...and [hundreds more](https://github.com/yt-dlp/yt-dlp/blob/master/supportedsites.md)
+
+If a site requires a login to view content, select your browser in the **Browser Cookies** dropdown and yt-dlp will borrow its session to access it.
 
 ---
 
