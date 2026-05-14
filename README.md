@@ -53,7 +53,7 @@ That's it — one launcher for everyone. It auto-detects everything:
    - No GPU → installs CPU-only PyTorch (slower but works)
 3. Creates a virtual environment
 4. Installs all Python dependencies
-5. Opens the app in your browser at `http://127.0.0.1:7860`
+5. Opens the app in your browser at `http://localhost:7860`
 
 Whisper models download automatically on first transcription.
 
