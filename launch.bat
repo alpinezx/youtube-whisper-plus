@@ -103,7 +103,7 @@ if errorlevel 1 (
 echo.
 echo  =========================================
 echo   All good! Launching in %GPU_MODE% mode...
-echo   Browser opens at http://127.0.0.1:7860
+echo   Browser opens at http://localhost:7860
 echo   Keep this window open while using the app.
 echo  =========================================
 echo.
