@@ -1,0 +1,11 @@
+# YouTube Whisper Plus — dependencies
+# UV resolves versions automatically.
+# PyTorch CUDA index is passed via launch.bat --extra-index-url
+
+gradio
+faster-whisper
+yt-dlp
+torch
+torchaudio
+requests
+tqdm
